@@ -242,7 +242,7 @@ interface RequestInterface
 	/**
      * To get HTTP URI for current request
      */
-	public final function getURI();
+	public function getURI();
 
 
 
@@ -303,347 +303,59 @@ interface RequestInterface
 
 
 	/**
-     * Checks whether request include attached files
+     * To check if any files are attached with the request
+	 *
+	 * @return boolean
      */
-	public function hasFiles(boolean onlySuccessful = false) -> long
-	{
-        var files, file, error;
-		int numberFiles = 0;
-
-		let files = _FILES;
-
-		if typeof files != "array" {
-        return 0;
-    }
-
-		for file in files {
-            if fetch error, file["error"] {
-
-                if typeof error != "array" {
-                    if !error || !onlySuccessful {
-                        let numberFiles++;
-					}
-                }
-
-				if typeof error == "array" {
-                    let numberFiles += this->hasFileHelper(error, onlySuccessful);
-				}
-			}
-		}
-
-		return numberFiles;
-	}
+	public function hasFiles();
 
 	/**
-     * Recursively counts file in an array of files
-     */
-	protected final function hasFileHelper(var data, boolean onlySuccessful) -> long
-	{
-        var value;
-        int numberFiles = 0;
-
-		if typeof data != "array" {
-        return 1;
-    }
-
-		for value in data {
-            if typeof value != "array" {
-                if !value || !onlySuccessful {
-                    let numberFiles++;
-				}
-            }
-
-			if typeof value == "array" {
-                let numberFiles += this->hasFileHelper(value, onlySuccessful);
-			}
-		}
-
-		return numberFiles;
-	}
-
-	/**
-     * Gets attached files as Phalcon\Http\Request\File instances
-     */
-	public function getUploadedFiles(boolean onlySuccessful = false) -> <File[]>
-	{
-        var superFiles, prefix, input, smoothInput, file, dataFile;
-		array files = [];
-
-		let superFiles = _FILES;
-
-		if count(superFiles) > 0 {
-
-            for prefix, input in superFiles {
-                if typeof input["name"] == "array" {
-                    let smoothInput = this->smoothFiles(input["name"], input["type"], input["tmp_name"], input["size"], input["error"], prefix);
-
-					for file in smoothInput {
-                        if onlySuccessful == false || file["error"] == UPLOAD_ERR_OK {
-                            let dataFile = [
-                                "name": file["name"],
-								"type": file["type"],
-								"tmp_name": file["tmp_name"],
-								"size": file["size"],
-								"error": file["error"]
-							];
-
-							let files[] = new File(dataFile, file["key"]);
-						}
-                    }
-				} else {
-                    if onlySuccessful == false || input["error"] == UPLOAD_ERR_OK {
-                        let files[] = new File(input, prefix);
-					}
-                }
-			}
-        }
-
-		return files;
-	}
-
-	/**
-     * Smooth out $_FILES to have plain array with all files uploaded
-     */
-	protected final function smoothFiles(array! names, array! types, array! tmp_names, array! sizes, array! errors, string prefix) -> array
-	{
-        var idx, name, file, files, parentFiles, p;
-
-		let files = [];
-
-		for idx, name in names {
-            let p = prefix . "." . idx;
-
-			if typeof name == "string" {
-
-                let files[] = [
-                    "name": name,
-					"type": types[idx],
-					"tmp_name": tmp_names[idx],
-					"size": sizes[idx],
-					"error": errors[idx],
-					"key": p
-				];
-			}
-
-			if typeof name == "array" {
-                let parentFiles = this->smoothFiles(names[idx], types[idx], tmp_names[idx], sizes[idx], errors[idx], p);
-
-				for file in parentFiles {
-                    let files[] = file;
-				}
-			}
-		}
-
-		return files;
-	}
-
-	/**
-     * Returns the available headers in the request
-     */
-	public function getHeaders() -> array
-	{
-        var name, value, contentHeaders;
-		array headers;
-
-		let headers = [];
-		let contentHeaders = ["CONTENT_TYPE": true, "CONTENT_LENGTH": true];
-
-		for name, value in _SERVER {
-            if starts_with(name, "HTTP_") {
-            let name = ucwords(strtolower(str_replace("_", " ", substr(name, 5)))),
-					name = str_replace(" ", "-", name);
-				let headers[name] = value;
-			} elseif isset contentHeaders[name] {
-                let name = ucwords(strtolower(str_replace("_", " ", name))),
-					name = str_replace(" ", "-", name);
-				let headers[name] = value;
-			}
-		}
-
-		return headers;
-	}
-
-	/**
-     * Gets web page that refers active request. ie: http://www.google.com
-     */
-	public function getHTTPReferer() -> string
-	{
-        var httpReferer;
-        if fetch httpReferer, _SERVER["HTTP_REFERER"] {
-        return httpReferer;
-    }
-		return "";
-	}
-
-	/**
-     * Process a request header and return an array of values with their qualities
-     */
-	protected final function _getQualityHeader(string! serverIndex, string! name) -> array
-	{
-        var returnedParts, part, headerParts, headerPart, split;
-
-		let returnedParts = [];
-		for part in preg_split("/,\\s*/", this->getServer(serverIndex), -1, PREG_SPLIT_NO_EMPTY) {
-
-            let headerParts = [];
-			for headerPart in preg_split("/\s*;\s*/", trim(part), -1, PREG_SPLIT_NO_EMPTY) {
-				if strpos(headerPart, "=") !== false {
-                    let split = explode("=", headerPart, 2);
-					if split[0] === "q" {
-                        let headerParts["quality"] = (double) split[1];
-					} else {
-                        let headerParts[split[0]] = split[1];
-					}
-				} else {
-                    let headerParts[name] = headerPart;
-					let headerParts["quality"] = 1.0;
-				}
-			}
-
-			let returnedParts[] = headerParts;
-		}
-
-		return returnedParts;
-	}
-
-	/**
-     * Process a request header and return the one with best quality
-     */
-	protected final function _getBestQuality(array qualityParts, string! name) -> string
-	{
-        int i;
-		double quality, acceptQuality;
-		var selectedName, accept;
-
-		let i = 0,
-			quality = 0.0,
-			selectedName = "";
-
-		for accept in qualityParts {
-            if i == 0 {
-                let quality = (double) accept["quality"],
-					selectedName = accept[name];
-			} else {
-                let acceptQuality = (double) accept["quality"];
-				if acceptQuality > quality {
-                    let quality = acceptQuality,
-						selectedName = accept[name];
-				}
-			}
-            let i++;
-		}
-		return selectedName;
-	}
-
-	/**
-     * Gets content type which request has been made
-     */
-	public function getContentType() -> string | null
-	{
-        var contentType;
-
-        if fetch contentType, _SERVER["CONTENT_TYPE"] {
-        return contentType;
-    } else {
-        /**
-         * @see https://bugs.php.net/bug.php?id=66606
-         */
-        if fetch contentType, _SERVER["HTTP_CONTENT_TYPE"] {
-            return contentType;
-        }
-		}
-
-		return null;
-	}
-
-	/**
-     * Gets an array with mime/types and their quality accepted by the browser/client from _SERVER["HTTP_ACCEPT"]
-     */
-	public function getAcceptableContent() -> array
-	{
-        return this->_getQualityHeader("HTTP_ACCEPT", "accept");
-	}
-
-	/**
-     * Gets best mime/type accepted by the browser/client from _SERVER["HTTP_ACCEPT"]
-     */
-	public function getBestAccept() -> string
-	{
-        return this->_getBestQuality(this->getAcceptableContent(), "accept");
-	}
-
-	/**
-     * Gets a charsets array and their quality accepted by the browser/client from _SERVER["HTTP_ACCEPT_CHARSET"]
-     */
-	public function getClientCharsets() -> var
-	{
-        return this->_getQualityHeader("HTTP_ACCEPT_CHARSET", "charset");
-	}
-
-	/**
-     * Gets best charset accepted by the browser/client from _SERVER["HTTP_ACCEPT_CHARSET"]
-     */
-	public function getBestCharset() -> string
-	{
-        return this->_getBestQuality(this->getClientCharsets(), "charset");
-	}
-
-	/**
-     * Gets languages array and their quality accepted by the browser/client from _SERVER["HTTP_ACCEPT_LANGUAGE"]
-     */
-	public function getLanguages() -> array
-	{
-        return this->_getQualityHeader("HTTP_ACCEPT_LANGUAGE", "language");
-	}
-
-	/**
-     * Gets best language accepted by the browser/client from _SERVER["HTTP_ACCEPT_LANGUAGE"]
-     */
-	public function getBestLanguage() -> string
-	{
-        return this->_getBestQuality(this->getLanguages(), "language");
-	}
+	 * Alias of hasFiles, to check if any files are attached with the request
+	 *
+	 * @return boolean
+	 */
+	public function hasUploadedFiles();
 
 
 	/**
-     * Gets auth info accepted by the browser/client from $_SERVER['PHP_AUTH_USER']
+     * To get uploaded files
      */
-	public function getBasicAuth() -> array | null
-	{
-        var auth;
+	public function getFiles();
 
-        if isset _SERVER["PHP_AUTH_USER"] && isset _SERVER["PHP_AUTH_PW"] {
-        let auth = [];
-			let auth["username"] = _SERVER["PHP_AUTH_USER"];
-			let auth["password"] = _SERVER["PHP_AUTH_PW"];
-			return auth;
-		}
-
-		return null;
-	}
 
 	/**
-     * Gets auth info accepted by the browser/client from $_SERVER['PHP_AUTH_DIGEST']
+	 * To check if referer is set
+	 *
+	 * @return boolean
+	 */
+	public function hasReferer();
+
+	/**
+     * To get the page referer
      */
-	public function getDigestAuth() -> array
-	{
-        var digest, matches, match;
-		array auth;
+	public function getReferer();
 
-		let auth = [];
-		if fetch digest, _SERVER["PHP_AUTH_DIGEST"] {
-        let matches = [];
-			if !preg_match_all("#(\\w+)=(['\"]?)([^'\" ,]+)\\2#", digest, matches, 2) {
-				return auth;
-			}
-			if typeof matches == "array" {
-            for match in matches {
-                let auth[match[1]] = match[3];
-				}
-        }
-		}
 
-		return auth;
-	}
+	/**
+     * To get the request content type
+     */
+	public function getContentType();
+
+	/**
+     * To get client acceptable/requested content type
+     */
+	public function getClientAcceptableContentTypes();
+
+
+	/**
+     * To get client charsets array
+     */
+	public function getClientCharsets();
+
+
+	/**
+     * To get client languages array
+     */
+	public function getClientLanguages();
 
 }
