@@ -1,0 +1,21 @@
+{
+  "name": "zenex/hiro",
+  "description": "PHP 7 framework for creating apps using TDD/BDD/DDD and clean code",
+  "license" : "MIT",
+  "authors" : [
+    {
+      "name" : "Ali Masood",
+      "email" : "ali@zenex.co",
+      "role" : "Developer"
+    }
+  ],
+  "support" : {
+    "issues" : "https://github.com/zenexia/hiro/issues"
+  },
+  "minimum-stability" : "dev",
+  "prefer-stable" : true,
+  "require": {
+    "php": ">=7.0",
+    "another-vendor/package": "1.*"
+  }
+}
