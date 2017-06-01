@@ -35,6 +35,10 @@ namespace Hiro\Http;
 interface RequestInterface
 {
 
+    public function __construct(string $uri, array $params=[]);
+
+    public function setParam($key, $value);
+
 	/**
      * To get a request parameter from the current HTTP Request.
 	 *

@@ -32,6 +32,14 @@ namespace Hiro\Http;
 class Request implements RequestInterface
 {
 
+    protected $uri;
+    protected $params;
+
+    public function __construct(string $uri, array $params=[]) {
+        $this->uri = $uri;
+        $this->params = $params;
+    }
+
     /**
      * To get a request parameter from the current HTTP Request.
      *
@@ -39,8 +47,11 @@ class Request implements RequestInterface
      *
      * @param string $key
      */
-    public function getParam($key){
-
+    public function getParam($key) {
+        if (!isset($this->params[$key])) {
+            throw new \InvalidArgumentException("The request parameter with key '$key' is invalid.");
+        }
+        return $this->params[$key];
     }
 
 
@@ -52,7 +63,9 @@ class Request implements RequestInterface
      * @param array $keys
      * @return mixed
      */
-    public function getParams(array $keys){}
+    public function getParams(array $keys) {
+        return $this->params;
+    }
 
     /**
      * To get a parameters from POST request only.
@@ -241,14 +254,22 @@ class Request implements RequestInterface
     /**
      * To get HTTP URI for current request
      */
-    public function getURI(){}
+    public function getURI(){
+        return $this->uri;
+    }
 
 
+    public function setParam($key, $value) {
+        $this->params[$key] = $value;
+        return $this;
+    }
 
     /**
      * To get HTTP request method
      */
-    public function getMethod(){}
+    public function getMethod(){
+        return mb_strtoupper($_SERVER['REQUEST_METHOD']);
+    }
 
     /**
      * To check if request is made using GET method
