@@ -9,6 +9,11 @@
       "role" : "Developer"
     }
   ],
+  "autoload": {
+    "psr-4": {
+      "Hiro\\": "zenex/hiro"
+    }
+  },
   "support" : {
     "issues" : "https://github.com/zenexia/hiro/issues"
   },
