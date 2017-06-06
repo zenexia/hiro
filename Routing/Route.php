@@ -15,20 +15,20 @@ abstract class Route implements RouteInterface
 
     protected $path;
     protected $name;
-    protected $method;
+    protected $methods;
     protected $paramDefaults;
     protected $conditions;
 
     public function __construct(
         string $path,
         string $name = '',
-        string $method = 'ANY',
+        array $methods = [],
         array $paramDefaults = [],
         array $conditions = []
     ) {
         $this->path = $path;
         $this->name = $name;
-        $this->method = $method;
+        $this->methods = $methods;
         $this->paramDefaults = $paramDefaults;
         $this->conditions = $conditions;
     }
