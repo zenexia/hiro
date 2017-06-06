@@ -9,8 +9,8 @@
 namespace Hiro\Controllers;
 
 
-use ZMC\Http\RequestInterface;
-use ZMC\Http\ResponseInterface;
+use Hiro\Http\RequestInterface;
+use Hiro\Http\ResponseInterface;
 
 class ViewController implements ControllerInterface
 {

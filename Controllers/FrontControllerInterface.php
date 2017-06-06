@@ -9,10 +9,10 @@
 namespace Hiro\Controllers;
 
 
-use ZMC\Http\RequestInterface;
-use ZMC\Http\ResponseInterface;
-use ZMC\Routing\DispatcherInterface;
-use ZMC\Routing\RouterInterface;
+use Hiro\Http\RequestInterface;
+use Hiro\Http\ResponseInterface;
+use Hiro\Routing\DispatcherInterface;
+use Hiro\Routing\RouterInterface;
 
 interface FrontControllerInterface
 {

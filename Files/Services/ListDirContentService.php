@@ -9,7 +9,7 @@
 namespace Hiro\Services;
 
 
-use ZMC\Files\FileScout;
+use Hiro\Files\FileScout;
 
 class ListDirContentService
 {
