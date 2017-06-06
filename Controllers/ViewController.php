@@ -24,7 +24,7 @@ class ViewController implements ControllerInterface
 
     }
     public function before(){
-        echo "View before<br>";
+
     }
     public function after(){
 
