@@ -12,29 +12,33 @@ use Hiro\Controllers\ControllerNotFoundException;
 use Hiro\Http\RequestInterface;
 use Hiro\Http\ResponseInterface;
 
-class RouteAction extends Route
+class RouteResource extends Route
 {
 
     protected $controller;
-    protected $action;
+    protected $actions;
+    protected $splitAjax;
     const BASE_PATH = 'App\Http\Controllers\\';
 
     public function __construct(
         string $path,
         string $controller,
-        string $action = 'index',
-        array $methods = [],
+        array $actions,
         string $name = '',
+        array $methods = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'CONNECT', 'OPTIONS', ],
         array $paramDefaults = [],
-        array $conditions = []
+        array $conditions = [],
+        bool $splitAjax = true
     ) {
         parent::__construct($path, $name, $methods, $paramDefaults, $conditions);
         $this->controller = $controller;
-        $this->action = $action;
+        $this->actions = $actions;
+        $this->splitAjax = $splitAjax;
     }
 
     public function getController(RequestInterface $request, ResponseInterface $response):ControllerInterface {
         $controller = self::BASE_PATH . $this->controller . 'Controller';
+
         //make sure the class exists
         if(!class_exists($controller)){
             throw new ControllerNotFoundException("Controller class $controller does not exist", 2356);

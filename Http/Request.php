@@ -35,9 +35,28 @@ class Request implements RequestInterface
     protected $uri;
     protected $params;
 
-    public function __construct(string $uri, array $params=[]) {
+    public function __construct(string $uri, bool $initiate = true) {
         $this->uri = $uri;
-        $this->params = $params;
+        if($initiate){
+            $this->init();
+        }
+    }
+
+    private function init(){
+        // set GET data params
+        if(!empty($_GET)){
+            foreach($_GET as $key=>$val) {
+                $this->setParam($key, $val);
+            }
+        }
+
+
+        // set POST data params
+        if(!empty($_POST)) {
+            foreach ($_POST as $key => $val) {
+                $this->setParam($key, $val);
+            }
+        }
     }
 
     /**

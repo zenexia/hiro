@@ -37,9 +37,9 @@ class WebApplication implements ApplicationInterface
 
     public function run(){
         try{
-            $request = new Request("$_SERVER[REQUEST_URI]", ['Main Page']);
+            $request = new Request("$_SERVER[REQUEST_URI]", true);
 
-            $response = new Response($this->appRoot . "/App/Views/");
+            $response = new Response($this->appRoot . "/app/views/");
 
             $router = new Router($this->routeCollection);
 

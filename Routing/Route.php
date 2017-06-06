@@ -46,11 +46,11 @@ abstract class Route implements RouteInterface
     private function simpleMatch(RequestInterface $request){
         $uri = $request->getURI();
         $match = false;
-        if($this->method == 'ANY'){
+        $rMethod = $request->getMethod();
+        if(empty($this->methods)){
             $match = $this->path === $uri;
-        }else{
-            $rMethod = $request->getMethod();
-            $match = ($this->path === $uri && $this->method == $rMethod);
+        }elseif(in_array($rMethod, $this->methods)){
+            $match = $this->path === $uri;
         }
         return $match;
     }
