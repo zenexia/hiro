@@ -11,7 +11,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "Hiro\\": "zenex/hiro"
+      "Hiro\\": "hiro/"
     }
   },
   "support" : {
