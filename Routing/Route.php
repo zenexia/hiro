@@ -39,17 +39,25 @@ abstract class Route implements RouteInterface
         if(!empty($matches[1])){
             return $this->fullMatch($request, $matches);
         }else{
-            return $this->simpleMatch($request->getUri());
+            return $this->simpleMatch($request);
         }
     }
 
-    private function simpleMatch($uri){
-        return $this->path === $uri;
+    private function simpleMatch(RequestInterface $request){
+        $uri = $request->getURI();
+        $match = false;
+        if($this->method == 'ANY'){
+            $match = $this->path === $uri;
+        }else{
+            $rMethod = $request->getMethod();
+            $match = ($this->path === $uri && $this->method == $rMethod);
+        }
+        return $match;
     }
 
     private function fullMatch(RequestInterface $request, $matches){
 
-        $uri = $request->getUri();
+        $uri = $request->getURI();
         //remove trailing slash
         $uri = rtrim($uri, '/');
         $matching = false;
