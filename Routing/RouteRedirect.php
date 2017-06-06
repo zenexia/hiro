@@ -19,11 +19,11 @@ class RouteRedirect extends Route
         string $path,
         string $redirectTo,
         string $name = '',
-        string $method = 'ANY',
+        array $methods = [],
         array $paramDefaults = [],
         array $conditions = []
     ) {
-        parent::__construct($path, $name, $method, $paramDefaults, $conditions);
+        parent::__construct($path, $name, $methods, $paramDefaults, $conditions);
         $this->redirectTo = $redirectTo;
     }
 

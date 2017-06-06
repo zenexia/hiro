@@ -35,7 +35,7 @@ namespace Hiro\Http;
 interface RequestInterface
 {
 
-    public function __construct(string $uri, array $params=[]);
+    public function __construct(string $uri, bool $initiate = true);
 
     public function setParam($key, $value);
 
