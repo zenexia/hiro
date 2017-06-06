@@ -7,15 +7,15 @@
  * Time: 20:12
  */
 namespace Hiro\Routing;
-use ZMC\Http\RequestInterface;
-use ZMC\Http\ResponseInterface;
+use Hiro\Http\RequestInterface;
+use Hiro\Http\ResponseInterface;
 
 class Dispatcher implements DispatcherInterface
 {
 
     public function dispatch(RouteInterface $route, RequestInterface $request,ResponseInterface $response)
     {
-        if(get_class($route) == 'ZMC\Routing\RouteRedirect') {
+        if(get_class($route) == 'Hiro\Routing\RouteRedirect') {
             $url = $route->getUrl();
             //find if url contains vars
             $pattern = '/{(.*?)}/';

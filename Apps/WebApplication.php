@@ -8,12 +8,12 @@
 
 namespace Hiro\Apps;
 
-use ZMC\Controllers\FrontController;
-use ZMC\Http\Request;
-use ZMC\Http\Response;
-use ZMC\Routing\Dispatcher;
-use ZMC\Routing\RouteAction;
-use ZMC\Routing\Router;
+use Hiro\Controllers\FrontController;
+use Hiro\Http\Request;
+use Hiro\Http\Response;
+use Hiro\Routing\Dispatcher;
+use Hiro\Routing\RouteAction;
+use Hiro\Routing\Router;
 
 class WebApplication implements ApplicationInterface
 {

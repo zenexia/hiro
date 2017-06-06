@@ -7,10 +7,10 @@
  * Time: 20:11
  */
 namespace Hiro\Routing;
-use ZMC\Controllers\ControllerInterface;
-use ZMC\Controllers\ControllerNotFoundException;
-use ZMC\Http\RequestInterface;
-use ZMC\Http\ResponseInterface;
+use Hiro\Controllers\ControllerInterface;
+use Hiro\Controllers\ControllerNotFoundException;
+use Hiro\Http\RequestInterface;
+use Hiro\Http\ResponseInterface;
 
 class RouteAction extends Route
 {

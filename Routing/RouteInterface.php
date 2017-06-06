@@ -7,8 +7,8 @@
  * Time: 20:11
  */
 namespace Hiro\Routing;
-use ZMC\Controllers\ControllerInterface;
-use ZMC\Http\RequestInterface;
+use Hiro\Controllers\ControllerInterface;
+use Hiro\Http\RequestInterface;
 
 Interface RouteInterface {
     public function match(RequestInterface $request);
