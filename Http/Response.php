@@ -17,6 +17,7 @@ class Response implements ResponseInterface
     protected $headers;
     protected $template;
     protected $viewParams;
+    const FILE_EXT = ".html.php";
 
     public function __construct(string $viewsPath) {
         $this->viewsPath = $viewsPath;
@@ -54,11 +55,11 @@ class Response implements ResponseInterface
 
     public function render(){
         extract($this->viewParams);
-        $viewFile = $this->viewsPath . $this->template . ".html";
+        $viewFile = $this->viewsPath . $this->template . self::FILE_EXT;
         if(!file_exists($viewFile)){
             throw new ViewFileNotFoundException("The view file $viewFile does not exist", 3456);
         }
-        include $this->viewsPath . $this->template . ".html";
+        include $this->viewsPath . $this->template . self::FILE_EXT;
     }
 
     public function with(array $params){
