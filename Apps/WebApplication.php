@@ -35,11 +35,11 @@ class WebApplication implements ApplicationInterface
         $this->routeCollection = require_once $this->appRoot . $routeFile;
     }
 
-    public function run(){
+    public function run(string $viewsPath){
         try{
             $request = new Request("$_SERVER[REQUEST_URI]", true);
 
-            $response = new Response($this->appRoot . "/app/views/");
+            $response = new Response($this->appRoot . $viewsPath);
 
             $router = new Router($this->routeCollection);
 

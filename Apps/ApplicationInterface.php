@@ -12,5 +12,5 @@ namespace Hiro\Apps;
 interface ApplicationInterface
 {
     public function __construct(string $appRoot = '');
-    public function run();
+    public function run(string $viewsPath);
 }
