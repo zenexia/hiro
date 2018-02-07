@@ -17,7 +17,7 @@ class RouteAction extends Route
 
     protected $controller;
     protected $action;
-    const BASE_PATH = 'App\Http\Controllers\\';
+    const BASE_PATH = 'apps\web\controllers\\';
 
     public function __construct(
         string $path,
